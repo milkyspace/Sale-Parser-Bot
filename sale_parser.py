@@ -19,8 +19,8 @@ from selenium_stealth import stealth
 import datetime
 
 # Конфигурация
-TELEGRAM_BOT_TOKEN = '5749724058:AAGK920aC-lDZGz9sRxOMKxoQVXYLpL4eVQ'
-TELEGRAM_CHANNEL_ID = '@sales_for_products'
+TELEGRAM_BOT_TOKEN = '***'
+TELEGRAM_CHANNEL_ID = '@'***'
 SENT_DEALS_FILE = 'sent_deals.json'
 PEPPER_URL = 'https://www.pepper.ru/new'
 USER_AGENTS = [
