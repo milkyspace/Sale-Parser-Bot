@@ -19,8 +19,8 @@ from selenium_stealth import stealth
 import datetime
 
 # Конфигурация
-TELEGRAM_BOT_TOKEN = 'xxxxxxxxxxxxxxxxxxx'
-TELEGRAM_CHANNEL_ID = '@xxxxxxxxxxxxxxxxxxx'
+TELEGRAM_BOT_TOKEN = '5749724058:AAGK920aC-lDZGz9sRxOMKxoQVXYLpL4eVQ'
+TELEGRAM_CHANNEL_ID = '@sales_for_products'
 SENT_DEALS_FILE = 'sent_deals.json'
 PEPPER_URL = 'https://www.pepper.ru/new'
 USER_AGENTS = [
@@ -362,8 +362,8 @@ def main():
         except Exception as e:
             print(f"Критическая ошибка в основном цикле: {e}")
 
-        # Пауза перед следующим запуском (2 минуты)
-        time.sleep(120)
+        # Пауза перед следующим запуском (10 минут)
+        time.sleep(10 * 60)
 
 
 if __name__ == "__main__":
