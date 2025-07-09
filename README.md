@@ -19,5 +19,5 @@
 
 ### 2. Клонирование репозитория
 ```bash
-git clone https://github.com/ваш-репозиторий/pepper-parser.git
-cd pepper-parser
+git clone https://github.com/ваш-репозиторий/sale-parser-bot.git
+cd sale-parser-bot
