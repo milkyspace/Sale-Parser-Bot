@@ -1,0 +1,8 @@
+selenium==4.*
+selenium-stealth==1.0.6
+requests==2.*
+beautifulsoup4==4.*
+webdriver-manager==4.*
+python-telegram-bot==20.*
+schedule==1.*
+pytz==2023.*
