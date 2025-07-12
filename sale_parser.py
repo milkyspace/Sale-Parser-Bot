@@ -215,8 +215,11 @@ def parse_deals(html):
                 title_elem = item.select_one('div.custom-card-title')
                 title = title_elem.get_text(strip=True) if title_elem else ''
 
-                desc_elem = item.select_one('row-start-3.col-start-1.col-end-5.text-secondary-text-light.items-center.break-long-word span')
+                desc_elem = item.select_one('.row-start-3.col-start-1.col-end-5.text-secondary-text-light.items-center.break-long-word span')
                 desc = desc_elem.get_text(strip=True) if desc_elem else ''
+
+                promocode_elem = item.select_one('.absolute.w-full.h-full.flex.items-center.justify-between order-1.overflow-hidden.overflow-ellipsis.whitespace-nowrap.text-base')
+                promocode = promocode_elem.get_text(strip=True) if promocode_elem else ''
 
                 link_elem = item.select_one(
                     'a.w-full.h-full.flex.justify-center.items-center.gtm_buy_now_homepage') or item.select_one(
@@ -253,6 +256,7 @@ def parse_deals(html):
                     'id': deal_id,
                     'title': title,
                     'description': desc,
+                    'promocode': promocode,
                     'new_price': new_price,
                     'old_price': old_price,
                     'discount': discount,
@@ -272,6 +276,7 @@ def send_to_telegram(deal):
         # Экранирование текстовых данных
         title = html.escape(deal['title'])
         description = html.escape(deal['description'])
+        promocode = html.escape(deal['promocode'])
         old_price = html.escape(deal['old_price'])
         new_price = html.escape(deal['new_price'])
 
@@ -293,6 +298,9 @@ def send_to_telegram(deal):
 
         if discount:
             message_lines.append(f"📉 Скидка: <b>{discount}</b>")
+
+        if promocode:
+            message_lines.append(f"Промокод: <b>{promocode}</b>")
 
         if link:
             message_lines.append(f"🔗 <a href='{link}'>Ссылка на товар</a>")
