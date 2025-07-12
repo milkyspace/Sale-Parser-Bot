@@ -228,6 +228,9 @@ def parse_deals(html):
                         raw_url = urllib.parse.urljoin('https://www.pepper.ru', raw_url)
                     final_url = clean_url(resolve_redirect(raw_url))
 
+                if 'pepper.ru' in final_url:
+                    continue
+
                 # Инициализация ценовых данных пустыми строками
                 new_price = ''
                 old_price = ''
