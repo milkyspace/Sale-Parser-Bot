@@ -215,13 +215,19 @@ def parse_deals(html):
                 title_elem = item.select_one('div.custom-card-title')
                 title = title_elem.get_text(strip=True) if title_elem else ''
 
+                desc = ''
                 desc_container = item.select_one('.row-start-3.col-start-1.col-end-5.text-secondary-text-light.items-center.break-long-word')
-                desc_elem = desc_container.select_one('span')
-                desc = desc_elem.get_text(strip=True) if desc_elem else ''
+                if desc_container:
+                    desc_elem = desc_container.select_one('span')
+                    if desc_elem:
+                        desc = desc_elem.get_text(strip=True) if desc_elem else ''
 
+                promocode = ''
                 promocode_container = item.select_one('.absolute.w-full.h-full.flex.items-center.justify-between')
-                promocode_elem = promocode_container.select_one('.order-1.overflow-hidden.overflow-ellipsis.whitespace-nowrap.text-base')
-                promocode = promocode_elem.get_text(strip=True) if promocode_elem else ''
+                    if promocode_container:
+                        promocode_elem = promocode_container.select_one('.order-1.overflow-hidden.overflow-ellipsis.whitespace-nowrap.text-base')
+                        if promocode_elem:
+                            promocode = promocode_elem.get_text(strip=True) if promocode_elem else ''
 
                 link_elem = item.select_one(
                     'a.w-full.h-full.flex.justify-center.items-center.gtm_buy_now_homepage') or item.select_one(
