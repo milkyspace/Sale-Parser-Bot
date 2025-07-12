@@ -123,7 +123,7 @@ def resolve_redirect(url, max_redirects=5):
     try:
         response = requests.head(
             url,
-            allow_redirects=False,  # Не следовать редиректам автоматически
+            allow_redirects=False,
             timeout=10,
             headers={'User-Agent': random.choice(USER_AGENTS)}
         )
@@ -137,6 +137,28 @@ def resolve_redirect(url, max_redirects=5):
                 parsed = urlparse(url)
                 base_url = f"{parsed.scheme}://{parsed.netloc}"
                 new_url = urllib.parse.urljoin(base_url, new_url)
+
+            # Особенная обработка для Яндекс.Маркета
+            if "showcaptcha" in new_url:
+                print("Обнаружена капча Яндекса, пропускаем редирект")
+                return url  # Возвращаем исходный URL вместо капчи
+
+            # Обработка retpath-параметра в URL Яндекса
+            if "market.yandex.ru" in new_url and "retpath=" in new_url:
+                try:
+                    parsed = urlparse(new_url)
+                    query = parse_qs(parsed.query)
+                    if 'retpath' in query:
+                        retpath = query['retpath'][0]
+                        decoded_retpath = urllib.parse.unquote(retpath)
+                        
+                        # Декодируем только один раз если нужно
+                        if decoded_retpath.startswith("aHR0c"):
+                            decoded_retpath = base64.b64decode(decoded_retpath).decode('utf-8')
+                        
+                        return decoded_retpath
+                except Exception as e:
+                    print(f"Ошибка декодирования retpath: {e}")
 
             # Рекурсивно обрабатываем следующий редирект
             if max_redirects > 0:
@@ -193,6 +215,9 @@ def parse_deals(html):
                 title_elem = item.select_one('div.custom-card-title')
                 title = title_elem.get_text(strip=True) if title_elem else ''
 
+                desc_elem = item.select_one('row-start-3.col-start-1.col-end-5.text-secondary-text-light.items-center.break-long-word span')
+                desc = desc_elem.get_text(strip=True) if desc_elem else ''
+
                 link_elem = item.select_one(
                     'a.w-full.h-full.flex.justify-center.items-center.gtm_buy_now_homepage') or item.select_one(
                     'a.cept-tt')
@@ -224,6 +249,7 @@ def parse_deals(html):
                 deals.append({
                     'id': deal_id,
                     'title': title,
+                    'description': desc,
                     'new_price': new_price,
                     'old_price': old_price,
                     'discount': discount,
@@ -242,6 +268,7 @@ def send_to_telegram(deal):
     try:
         # Экранирование текстовых данных
         title = html.escape(deal['title'])
+        description = html.escape(deal['description'])
         old_price = html.escape(deal['old_price'])
         new_price = html.escape(deal['new_price'])
 
@@ -252,6 +279,9 @@ def send_to_telegram(deal):
         # Формирование сообщения только с доступными данными
         message_lines = [f"🔥 <b>{title}</b>"]
 
+        if description:
+            message_lines.append(f"<small>{description}</small>")
+            
         if old_price:
             message_lines.append(f"💰 Старая цена: <s>{old_price}</s>")
 
