@@ -30,7 +30,6 @@ USER_AGENTS = [
 ]
 CLEAN_INTERVAL_DAYS = 2  # Интервал очистки истории в днях
 
-
 def setup_driver():
     """Настройка Selenium WebDriver с расширенными опциями для обхода блокировок"""
     chrome_options = Options()
@@ -151,11 +150,11 @@ def resolve_redirect(url, max_redirects=5):
                     if 'retpath' in query:
                         retpath = query['retpath'][0]
                         decoded_retpath = urllib.parse.unquote(retpath)
-                        
+
                         # Декодируем только один раз если нужно
                         if decoded_retpath.startswith("aHR0c"):
                             decoded_retpath = base64.b64decode(decoded_retpath).decode('utf-8')
-                        
+
                         return decoded_retpath
                 except Exception as e:
                     print(f"Ошибка декодирования retpath: {e}")
@@ -216,18 +215,20 @@ def parse_deals(html):
                 title = title_elem.get_text(strip=True) if title_elem else ''
 
                 desc = ''
-                desc_container = item.select_one('.row-start-3.col-start-1.col-end-5.text-secondary-text-light.items-center.break-long-word')
+                desc_container = item.select_one(
+                    '.row-start-3.col-start-1.col-end-5.text-secondary-text-light.items-center.break-long-word')
                 if desc_container:
                     desc_elem = desc_container.select_one('span')
                     if desc_elem:
                         desc = desc_elem.get_text(strip=True) if desc_elem else ''
-                
+
                 promocode = ''
                 promocode_container = item.select_one('.absolute.w-full.h-full.flex.items-center.justify-between')
-                    if promocode_container:
-                        promocode_elem = promocode_container.select_one('.order-1.overflow-hidden.overflow-ellipsis.whitespace-nowrap.text-base')
-                        if promocode_elem:
-                            promocode = promocode_elem.get_text(strip=True) if promocode_elem else ''
+                if promocode_container:
+                    promocode_elem = promocode_container.select_one(
+                        '.order-1.overflow-hidden.overflow-ellipsis.whitespace-nowrap.text-base')
+                    if promocode_elem:
+                        promocode = promocode_elem.get_text(strip=True) if promocode_elem else ''
 
                 link_elem = item.select_one(
                     'a.w-full.h-full.flex.justify-center.items-center.gtm_buy_now_homepage') or item.select_one(
@@ -273,6 +274,7 @@ def parse_deals(html):
             except Exception as e:
                 print(f"Ошибка парсинга: {e}")
                 continue
+
     else:
         print("Сделки не найдены")
 
@@ -296,8 +298,9 @@ def send_to_telegram(deal):
         message_lines = [f"🔥 <b>{title}</b>"]
 
         if description:
-            message_lines.append(f"<small>{description}</small>")
-            
+            description = description.replace('Показать ещё', '')
+            message_lines.append(f"{description}")
+
         if old_price:
             message_lines.append(f"💰 Старая цена: <s>{old_price}</s>")
 
@@ -417,3 +420,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
