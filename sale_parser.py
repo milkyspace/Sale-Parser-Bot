@@ -221,7 +221,7 @@ def parse_deals(html):
                     desc_elem = desc_container.select_one('span')
                     if desc_elem:
                         desc = desc_elem.get_text(strip=True) if desc_elem else ''
-
+                
                 promocode = ''
                 promocode_container = item.select_one('.absolute.w-full.h-full.flex.items-center.justify-between')
                     if promocode_container:
